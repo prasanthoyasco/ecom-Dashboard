@@ -1,0 +1,18 @@
+src/
+├── components/
+│   ├── atoms/
+│   ├── molecules/
+│   ├── organisms/
+├── layouts/
+│   └── DashboardLayout.tsx
+├── pages/
+│   └── dashboard/
+│       └── DashboardPage.tsx
+├── routes/
+│   └── AppRoutes.tsx
+├── data/
+│   └── mockStats.ts
+├── assets/
+│   └── icons/, images/
+├── styles/
+│   └── tailwind.config.js
