@@ -1,91 +1,73 @@
 import React, { useState } from "react";
+
 // Import all your step components
-import ProductPhotoUpload from "./ProductPhotoUpload"; // Assuming this is your first step
+import ProductPhotoUpload from "./ProductPhotoUpload";
 import ProductInfoStep from "./ProductInfoStep";
 import ProductDetailStep from "./ProductDetailStep";
-import ProductVariantStep from "./ProductVariantStep"; // The component with the "Add Variant" button
-import ProductVariantDetails from "./ProductVariantDetails"; // The component for displaying/editing a single variant
-import WeightShipping from "./weightShipping"; // Corrected casing for consistency
+import ProductVariantStep from "./ProductVariantStep";
+import ProductVariantDetails from "./ProductVariantDetails";
+import WeightShipping from "./WeightShipping";
 
-const steps = ["Product Photo", "Product Info", "Product Details", "Product Variants", "Weight & Shipping"];
+const steps = [
+  "Product Photo",
+  "Product Info",
+  "Product Details",
+  "Product Variants",
+  "Weight & Shipping",
+];
 
 const ProductFormModal = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
-  // --- Data states for each step ---
-  const [productPhotos, setProductPhotos] = useState([]); // from ProductPhotoUpload
-  const [productInfo, setProductInfo] = useState({ // from ProductInfoStep
+  // Step-wise data
+  const [productPhotos, setProductPhotos] = useState([]);
+  const [productInfo, setProductInfo] = useState({
     productName: "",
     category: "",
     subcategory: "",
   });
-  const [productDetails, setProductDetails] = useState({ // from ProductDetailStep
+  const [productDetails, setProductDetails] = useState({
     condition: "",
     description: "",
-    videoUrl: "", // Assuming you'll add state for this when video is implemented
+    videoUrl: "",
   });
-
-  const [variants, setVariants] = useState([]); // from ProductVariantStep and ProductVariantDetails
-  // You might need to update the variant structure to include options for each variant type
-  // Example: [{ id: 1, name: 'Color', options: [{ id: 101, value: 'Red' }] }]
-  // For now, keeping it simple as per your last ProductVariantDetails component.
-
-  const [weightShippingData, setWeightShippingData] = useState({ // from WeightShipping
-    weight: '',
-    weightUnit: 'Gram (g)',
-    dimensions: { width: '', height: '', length: '' },
-    insurance: 'optional',
-    shippingService: 'standard',
+  const [variants, setVariants] = useState([]);
+  const [weightShippingData, setWeightShippingData] = useState({
+    weight: "",
+    weightUnit: "Gram (g)",
+    dimensions: { width: "", height: "", length: "" },
+    insurance: "optional",
+    shippingService: "standard",
     preOrder: false,
   });
 
-  // --- Handlers for updating each step's data ---
+  // Handlers for info steps
+  const handleProductPhotosChange = (images) => setProductPhotos(images);
 
-  const handleProductPhotosChange = (images) => {
-    setProductPhotos(images);
+  const handleProductInfoChange = ({ target: { name, value } }) => {
+    setProductInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleProductInfoChange = (e) => {
-    // This handler assumes ProductInfoStep passes individual field changes,
-    // or you might refactor ProductInfoStep to pass an object for all its fields.
-    // Assuming individual changes for now as per your initial prop names.
-    const { name, value } = e.target;
-    setProductInfo((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleProductDetailChange = ({ target: { name, value, type, checked } }) => {
+    setProductDetails((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
-  const handleProductDetailChange = (e) => {
-    // Similar to ProductInfoStep, assuming individual changes.
-    const { name, value, type, checked } = e.target;
-    setProductDetails((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
+  const handleProductDescriptionChange = (value) =>
+    setProductDetails((prev) => ({ ...prev, description: value }));
 
-  const handleProductDescriptionChange = (newDescription) => {
-    setProductDetails(prevData => ({ ...prevData, description: newDescription }));
-  };
+  const handleConditionChange = (value) =>
+    setProductDetails((prev) => ({ ...prev, condition: value }));
 
-  const handleConditionChange = (newCondition) => {
-    setProductDetails(prevData => ({ ...prevData, condition: newCondition }));
-  };
+  const handleVideoUrlChange = (url) =>
+    setProductDetails((prev) => ({ ...prev, videoUrl: url }));
 
-  const handleVideoUrlChange = (url) => {
-    setProductDetails(prevData => ({ ...prevData, videoUrl: url }));
-  };
-
-
-  // Handlers for Product Variants
+  // Variant Handlers
   const addVariant = () => {
     if (variants.length >= 2) {
       alert("You can add a maximum of 2 variant types.");
       return;
     }
-    // Generate a unique ID for the new variant
-    setVariants([...variants, { id: Date.now(), name: "", options: [] }]); // Added options array
+    setVariants([...variants, { id: Date.now(), name: "", options: [] }]);
   };
 
   const removeVariant = (id) => {
@@ -93,18 +75,14 @@ const ProductFormModal = () => {
   };
 
   const updateVariantName = (id, newName) => {
-    setVariants(
-      variants.map((v) => (v.id === id ? { ...v, name: newName } : v))
-    );
+    setVariants(variants.map((v) => (v.id === id ? { ...v, name: newName } : v)));
   };
 
-  // You'll need handlers for adding/removing/updating options within each variant
-  // For example:
-  const addVariantOption = (variantId, newOptionValue) => {
+  const addVariantOption = (variantId, value) => {
     setVariants(
-      variants.map(v =>
+      variants.map((v) =>
         v.id === variantId
-          ? { ...v, options: [...v.options, { id: Date.now(), value: newOptionValue }] }
+          ? { ...v, options: [...v.options, { id: Date.now(), value }] }
           : v
       )
     );
@@ -112,9 +90,9 @@ const ProductFormModal = () => {
 
   const removeVariantOption = (variantId, optionId) => {
     setVariants(
-      variants.map(v =>
+      variants.map((v) =>
         v.id === variantId
-          ? { ...v, options: v.options.filter(opt => opt.id !== optionId) }
+          ? { ...v, options: v.options.filter((o) => o.id !== optionId) }
           : v
       )
     );
@@ -124,55 +102,29 @@ const ProductFormModal = () => {
     setWeightShippingData(data);
   };
 
-
-  // --- Navigation handlers ---
+  // Step Navigation
   const nextStep = () => {
-    // --- Add validation logic before advancing to the next step ---
-    // Example: Basic validation for the current step
     switch (currentStep) {
-      case 0: // Product Photo Upload
-        if (productPhotos.length === 0) {
-          alert("Please upload at least one product photo.");
-          return;
-        }
+      case 0:
+        if (!productPhotos.length) return alert("Upload at least one product photo.");
         break;
-      case 1: // Product Info Step
-        if (!productInfo.productName || productInfo.productName.length < 40 || !productInfo.category) {
-          alert("Please fill in required product name (min 40 chars) and category.");
-          return;
-        }
+      case 1:
+        if (!productInfo.productName || productInfo.productName.length < 40)
+          return alert("Product name must be at least 40 characters.");
+        if (!productInfo.category) return alert("Category is required.");
         break;
-      case 2: // Product Detail Step
-        if (!productDetails.condition || !productDetails.description) {
-          alert("Please select product condition and provide a description.");
-          return;
-        }
-        if (productDetails.description.length < 100) { // Example min length
-            alert("Product description should be at least 100 characters.");
-            return;
-        }
+      case 2:
+        if (!productDetails.condition || !productDetails.description)
+          return alert("Condition and description are required.");
+        if (productDetails.description.length < 100)
+          return alert("Description should be at least 100 characters.");
         break;
-      case 3: // Product Variant Step
-        // You might add validation here if variants are required or have specific rules
-        // For example, if variants are added, ensure their names are not empty, and they have options
-        // if (variants.length > 0 && variants.some(v => !v.name || v.options.length === 0)) {
-        //     alert("Please ensure all variants have a name and at least one option.");
-        //     return;
-        // }
-        break;
-      case 4: // Weight & Shipping
-          if (!weightShippingData.weight || parseFloat(weightShippingData.weight) <= 0 ||
-              !weightShippingData.dimensions.width || parseFloat(weightShippingData.dimensions.width) <= 0 ||
-              !weightShippingData.dimensions.height || parseFloat(weightShippingData.dimensions.height) <= 0 ||
-              !weightShippingData.dimensions.length || parseFloat(weightShippingData.dimensions.length) <= 0) {
-              alert("Please enter valid positive weight and dimensions.");
-              return;
-          }
-          break;
-      default:
+      case 4:
+        const { weight, dimensions } = weightShippingData;
+        if (!weight || weight <= 0 || Object.values(dimensions).some((d) => !d || d <= 0))
+          return alert("Enter valid weight and dimensions.");
         break;
     }
-    // If validation passes, move to the next step
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
 
@@ -180,47 +132,38 @@ const ProductFormModal = () => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  // --- Submit handler ---
   const handleSubmit = () => {
-    // Final validation can happen here as well
-    // For simplicity, directly logging the data
     const finalData = {
-      productPhotos: productPhotos.map(file => file.name), // Just sending file names for example
+      productPhotos: productPhotos.map((file) => file.name),
       productInfo,
       productDetails,
       variants,
       weightShipping: weightShippingData,
     };
-    console.log("Submitting data:", finalData);
-    alert("Form submitted! Check console for data.");
-    // In a real application, you would send this data to an API
+    console.log("Submitting:", finalData);
+    alert("Form submitted! Check console.");
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl">
       <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Add New Product</h1>
 
-      {/* Progress Indicator / Step Title */}
       <div className="mb-8 text-center text-lg font-medium text-indigo-700">
         Step {currentStep + 1} of {steps.length}: {steps[currentStep]}
       </div>
 
-      {/* --- Render Current Step Component --- */}
-      {currentStep === 0 && (
-        <ProductPhotoUpload onImagesChange={handleProductPhotosChange} />
-      )}
-
+      {/* Step Components */}
+      {currentStep === 0 && <ProductPhotoUpload onImagesChange={handleProductPhotosChange} />}
       {currentStep === 1 && (
         <ProductInfoStep
           productName={productInfo.productName}
-          setProductName={(name) => handleProductInfoChange({ target: { name: 'productName', value: name } })}
+          setProductName={(val) => handleProductInfoChange({ target: { name: "productName", value: val } })}
           category={productInfo.category}
-          setCategory={(cat) => handleProductInfoChange({ target: { name: 'category', value: cat } })}
+          setCategory={(val) => handleProductInfoChange({ target: { name: "category", value: val } })}
           subcategory={productInfo.subcategory}
-          setSubcategory={(subcat) => handleProductInfoChange({ target: { name: 'subcategory', value: subcat } })}
-          // You'll need to pass actual categories and subcategories data here
+          setSubcategory={(val) => handleProductInfoChange({ target: { name: "subcategory", value: val } })}
           categories={["Electronics", "Apparel", "Home Goods", "Books"]}
-          subcategories={ // Example: Filter subcategories based on selected category
+          subcategories={
             productInfo.category === "Electronics"
               ? ["Phones", "Laptops", "Tablets"]
               : productInfo.category === "Apparel"
@@ -229,55 +172,54 @@ const ProductFormModal = () => {
           }
         />
       )}
-
       {currentStep === 2 && (
         <ProductDetailStep
           condition={productDetails.condition}
           setCondition={handleConditionChange}
           description={productDetails.description}
           setDescription={handleProductDescriptionChange}
-          onAddVideoClick={() => alert("Video URL input will appear here or in a modal!")} // Placeholder for video
-          // You would likely pass productDetails.videoUrl and its setter here too
+          onAddVideoClick={() => alert("Video upload coming soon!")}
         />
       )}
-
       {currentStep === 3 && (
         <>
           <ProductVariantStep onAddVariantClick={addVariant} />
           {variants.length === 0 && (
-            <p className="mt-4 text-center text-gray-500">No variants added yet. Click "Add Variant" to begin.</p>
+            <p className="mt-4 text-center text-gray-500">
+              No variants added. Click "Add Variant" to begin.
+            </p>
           )}
           {variants.map((variant) => (
-            <ProductVariantDetails // Correctly using ProductVariantDetails here
+            <ProductVariantDetails
               key={variant.id}
               variantName={variant.name}
+              options={variant.options}
+              onNameChange={(val) => updateVariantName(variant.id, val)}
+              onAddOption={(val) => addVariantOption(variant.id, val)}
+              onRemoveOption={(optId) => removeVariantOption(variant.id, optId)}
               onRemove={() => removeVariant(variant.id)}
-              onNameChange={(newName) => updateVariantName(variant.id, newName)}
-              // You'll also need to pass props to manage options for this variant
-              // e.g., options={variant.options} onAddOption={...} onRemoveOption={...}
             />
           ))}
         </>
       )}
-
       {currentStep === 4 && (
         <WeightShipping
           weight={weightShippingData.weight}
-          setWeight={(val) => setWeightShippingData(prev => ({ ...prev, weight: val }))}
+          setWeight={(val) => setWeightShippingData((prev) => ({ ...prev, weight: val }))}
           weightUnit={weightShippingData.weightUnit}
-          setWeightUnit={(val) => setWeightShippingData(prev => ({ ...prev, weightUnit: val }))}
+          setWeightUnit={(val) => setWeightShippingData((prev) => ({ ...prev, weightUnit: val }))}
           dimensions={weightShippingData.dimensions}
-          setDimensions={(dims) => setWeightShippingData(prev => ({ ...prev, dimensions: dims }))}
+          setDimensions={(dims) => setWeightShippingData((prev) => ({ ...prev, dimensions: dims }))}
           insurance={weightShippingData.insurance}
-          setInsurance={(val) => setWeightShippingData(prev => ({ ...prev, insurance: val }))}
+          setInsurance={(val) => setWeightShippingData((prev) => ({ ...prev, insurance: val }))}
           shippingService={weightShippingData.shippingService}
-          setShippingService={(val) => setWeightShippingData(prev => ({ ...prev, shippingService: val }))}
+          setShippingService={(val) => setWeightShippingData((prev) => ({ ...prev, shippingService: val }))}
           preOrder={weightShippingData.preOrder}
-          setPreOrder={(val) => setWeightShippingData(prev => ({ ...prev, preOrder: val }))}
+          setPreOrder={(val) => setWeightShippingData((prev) => ({ ...prev, preOrder: val }))}
         />
       )}
 
-      {/* --- Navigation Buttons --- */}
+      {/* Navigation Buttons */}
       <div className="flex justify-between mt-10 p-4 border-t border-gray-200">
         <button
           onClick={prevStep}

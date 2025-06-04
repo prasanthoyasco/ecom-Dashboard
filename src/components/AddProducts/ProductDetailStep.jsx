@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 
 const ProductDetailStep = ({

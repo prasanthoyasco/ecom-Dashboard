@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 
-const ProductVariant = ({ variantName = "Variant 1", onRemove }) => {
+const ProductVariant = ({ variantName = "Variant 1", onRemove,onNameChange  }) => {
   const [variantValue, setVariantValue] = useState("");
 
 useEffect(() => {
