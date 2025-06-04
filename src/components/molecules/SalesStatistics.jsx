@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -9,7 +10,7 @@ import {
 } from "recharts";
 
 const data = [
-  { name: 'Day 1', value: 10, value2: 5 },
+  { name: '', value: 10, value2: 5 },
   { name: "Week 1", value: 20, value2: 10 },
   { name: "Week 2", value: 35, value2: 25 },
   { name: "Week 3", value: 49, value2: 40 },
@@ -19,7 +20,7 @@ const data = [
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#6C4CF1] text-white px-4 py-2 rounded-xl shadow-lg text-center">
+      <div className="bg-[#6C4CF1] text-white px-4 py-2 rounded-tl-[20px] rounded-tr-[5px] rounded-bl-[5px] rounded-br-[20px] shadow-lg text-center">
         <p className="text-sm text-gray-200 mb-1">10.06 — 17.06.2020</p>
         <p className="text-lg font-semibold">
           ₹{payload[0].value.toLocaleString()}
@@ -38,12 +39,12 @@ export default function SalesStatistics() {
     <div className="bg-white text-[#42427d] p-6 rounded-2xl">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Sales statistics</h2>
-        <button className="border border-[#42427d] text-[#42427d] rounded-full px-4 py-1 text-sm">
-          Monthly ▾
+        <button className="border border-[F3F6FF] text-[#42427d] rounded-tl-[20px] rounded-tr-[5px] rounded-bl-[5px] rounded-br-[20px] px-4 py-3 text-sm flex items-center gap-1">
+          Monthly {<ChevronDown size={16}/>}
         </button>
       </div>
 
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={400}>
         <LineChart
           data={data}
           margin={{ top: 30, right: 30, left: 0, bottom: 0 }}

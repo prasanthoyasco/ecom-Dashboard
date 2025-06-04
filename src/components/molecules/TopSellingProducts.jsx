@@ -29,7 +29,7 @@ const topProducts = [
 
 export default function TopSellingProducts() {
   return (
-    <div className="bg-white pt-2 p-6 w-full max-w-sm">
+    <div className="bg-white pt-2 p-6 w-full max-w-xl">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl font-semibold text-[#2E2E62]">Top selling products</h2>
         <a href="#" className="text-sm text-[#5840BB] flex items-center gap-1">

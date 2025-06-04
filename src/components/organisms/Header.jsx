@@ -3,7 +3,7 @@ import { useState } from "react";
 export default function Header() {
   const [active_notif, setactive_notif] = useState(true);
   return (
-    <header className="bg-white rounded-tl-[50px] rounded-tr-[50px] py-5 px-8 flex items-center justify-between">
+    <header className="bg-white rounded-tl-[50px] rounded-tr-[50px] py-5 px-8 flex items-center justify-between shadow-sm">
         <div className="text-3xl text-[#42427D]"><span className="font-medium me-1">Wellcome</span>,<strong>Admin</strong></div>
       <div className="flex items-center gap-4">
         <div className="relative ms-5 mt-2 w-72">

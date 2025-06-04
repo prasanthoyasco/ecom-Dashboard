@@ -26,43 +26,42 @@ export default function Sidebar() {
     <aside
       className={`${
         collapsed ? 'w-20' : 'w-64'
-      } bg-[#42427D] text-white p-6 pe-0 transition-all duration-300 ease-in-out relative`}
+      } bg-[#42427D] text-white p-6 pe-0 transition-all duration-300 ease-in-out relative select-none`}
     >
-      
-
       {/* Logo */}
       <div className={`mb-10 px-1 flex items-center gap-2 ${collapsed ? 'justify-center' : 'px-5'}`}>
-        <LucideShoppingCart />
-        {!collapsed && <h1 className="text-2xl font-bold">ShopNow</h1>}
-        <div>
-            {/* Toggle Button */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute bottom-14 -right-3 bg-[#42427d] focus:border-0 text-white p-1 rounded-full shadow-md"
-      >
-        {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-      </button>
-        </div>
+        <LucideShoppingCart size={24} />
+        {!collapsed && <h1 className="text-2xl font-bold select-text">ShopNow</h1>}
+
+        {/* Toggle Button */}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-expanded={!collapsed}
+          className="absolute bottom-14 -right-3 bg-[#42427d] text-white p-1 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          type="button"
+        >
+          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
       </div>
 
       {/* Navigation */}
       <nav className="space-y-4">
-        {navItems.map((item) => (
+        {navItems.map(({ label, icon, path }) => (
           <NavLink
-            key={item.label}
-            to={item.path}
+            key={label}
+            to={path}
             className={({ isActive }) =>
               `flex items-center gap-2 ease-in-out duration-500 ${
                 collapsed ? 'justify-center' : 'ps-3 pe-5'
               } py-3 rounded-[13px] rounded-tr-[0px] rounded-r-[0px] transition relative ${
-                isActive
-                  ? 'bg-white text-[#5840BB] font-medium active-tab'
-                  : 'hover:bg-purple-700'
+                isActive ? 'bg-white text-[#5840BB] font-medium active-tab' : 'hover:bg-purple-700'
               }`
             }
+            title={collapsed ? label : undefined} // tooltip when collapsed
           >
-            {item.icon}
-            {!collapsed && <span>{item.label}</span>}
+            {icon}
+            {!collapsed && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
