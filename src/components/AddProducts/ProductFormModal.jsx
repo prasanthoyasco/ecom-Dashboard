@@ -5,7 +5,7 @@ import ProductInfoStep from "./ProductInfoStep";
 import ProductDetailStep from "./ProductDetailStep";
 import ProductVariantStep from "./ProductVariantStep"; // The component with the "Add Variant" button
 import ProductVariantDetails from "./ProductVariantDetails"; // The component for displaying/editing a single variant
-import WeightShipping from "./WeightShipping"; // Corrected casing for consistency
+import WeightShipping from "./weightShipping"; // Corrected casing for consistency
 
 const steps = ["Product Photo", "Product Info", "Product Details", "Product Variants", "Weight & Shipping"];
 
