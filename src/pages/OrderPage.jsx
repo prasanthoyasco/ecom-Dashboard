@@ -1,5 +1,5 @@
 import React from 'react'
-import OrdersList from '../../components/molecules/OrdersList'
+import OrdersList from '../components/molecules/OrdersList'
 export default function OrderPage() {
   return (
     <>

@@ -49,7 +49,10 @@ const ProductFormModal = () => {
   };
 
   const handleProductDetailChange = ({ target: { name, value, type, checked } }) => {
-    setProductDetails((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    setProductDetails((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleProductDescriptionChange = (value) =>
@@ -121,9 +124,17 @@ const ProductFormModal = () => {
         break;
       case 4:
         const { weight, dimensions } = weightShippingData;
-        if (!weight || weight <= 0 || Object.values(dimensions).some((d) => !d || d <= 0))
-          return alert("Enter valid weight and dimensions.");
-        break;
+          const { width, height, length } = dimensions || {};
+
+          if (
+            !weight || isNaN(weight) || Number(weight) <= 0 ||
+            !width || isNaN(width) || Number(width) <= 0 ||
+            !height || isNaN(height) || Number(height) <= 0 ||
+            !length || isNaN(length) || Number(length) <= 0
+          ) {
+            return alert("Enter valid weight and all dimensions (width, height, length).");
+          }
+          break;
     }
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
@@ -157,11 +168,17 @@ const ProductFormModal = () => {
       {currentStep === 1 && (
         <ProductInfoStep
           productName={productInfo.productName}
-          setProductName={(val) => handleProductInfoChange({ target: { name: "productName", value: val } })}
+          setProductName={(val) =>
+            handleProductInfoChange({ target: { name: "productName", value: val } })
+          }
           category={productInfo.category}
-          setCategory={(val) => handleProductInfoChange({ target: { name: "category", value: val } })}
+          setCategory={(val) =>
+            handleProductInfoChange({ target: { name: "category", value: val } })
+          }
           subcategory={productInfo.subcategory}
-          setSubcategory={(val) => handleProductInfoChange({ target: { name: "subcategory", value: val } })}
+          setSubcategory={(val) =>
+            handleProductInfoChange({ target: { name: "subcategory", value: val } })
+          }
           categories={["Electronics", "Apparel", "Home Goods", "Books"]}
           subcategories={
             productInfo.category === "Electronics"
@@ -178,7 +195,10 @@ const ProductFormModal = () => {
           setCondition={handleConditionChange}
           description={productDetails.description}
           setDescription={handleProductDescriptionChange}
+          videoUrl={productDetails.videoUrl}
+          setVideoUrl={handleVideoUrlChange}
           onAddVideoClick={() => alert("Video upload coming soon!")}
+          handleChange={handleProductDetailChange}
         />
       )}
       {currentStep === 3 && (
@@ -204,6 +224,7 @@ const ProductFormModal = () => {
       )}
       {currentStep === 4 && (
         <WeightShipping
+          onChange={handleWeightShippingChange}
           weight={weightShippingData.weight}
           setWeight={(val) => setWeightShippingData((prev) => ({ ...prev, weight: val }))}
           weightUnit={weightShippingData.weightUnit}
@@ -213,7 +234,9 @@ const ProductFormModal = () => {
           insurance={weightShippingData.insurance}
           setInsurance={(val) => setWeightShippingData((prev) => ({ ...prev, insurance: val }))}
           shippingService={weightShippingData.shippingService}
-          setShippingService={(val) => setWeightShippingData((prev) => ({ ...prev, shippingService: val }))}
+          setShippingService={(val) =>
+            setWeightShippingData((prev) => ({ ...prev, shippingService: val }))
+          }
           preOrder={weightShippingData.preOrder}
           setPreOrder={(val) => setWeightShippingData((prev) => ({ ...prev, preOrder: val }))}
         />

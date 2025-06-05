@@ -1,8 +1,8 @@
-import StatCard from '../../components/molecules/StatCard';
+import StatCard from '../components/molecules/StatCard';
 import { DollarSign, IndianRupeeIcon, ListOrderedIcon, PiggyBank, ReceiptText, ShoppingCart } from 'lucide-react';
-import TopSellingProducts from '../../components/molecules/TopSellingProducts';
-import SalesStatistics from '../../components/molecules/SalesStatistics';
-import UniqueVisitorsChart from '../../components/molecules/UniqueVisitorsChart';
+import TopSellingProducts from '../components/molecules/TopSellingProducts';
+import SalesStatistics from '../components/molecules/SalesStatistics';
+import UniqueVisitorsChart from '../components/molecules/UniqueVisitorsChart';
 
 export default function DashboardPage() {
   return (
