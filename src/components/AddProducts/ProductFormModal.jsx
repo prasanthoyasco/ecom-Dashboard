@@ -6,7 +6,7 @@ import ProductInfoStep from "./ProductInfoStep";
 import ProductDetailStep from "./ProductDetailStep";
 import ProductVariantStep from "./ProductVariantStep";
 import ProductVariantDetails from "./ProductVariantDetails";
-import WeightShipping from "./WeightShipping.jsx";
+import WeightShippings from "./WeightShippings.jsx";
 
 const steps = [
   "Product Photo",
@@ -149,7 +149,7 @@ const ProductFormModal = () => {
       productInfo,
       productDetails,
       variants,
-      weightShipping: weightShippingData,
+      WeightShippings: weightShippingData,
     };
     console.log("Submitting:", finalData);
     alert("Form submitted! Check console.");
@@ -223,7 +223,7 @@ const ProductFormModal = () => {
         </>
       )}
       {currentStep === 4 && (
-        <WeightShipping
+        <WeightShippings
           onChange={handleWeightShippingChange}
           weight={weightShippingData.weight}
           setWeight={(val) => setWeightShippingData((prev) => ({ ...prev, weight: val }))}

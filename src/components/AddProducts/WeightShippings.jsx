@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const WeightShipping = () => {
+const WeightShippings = () => {
   const [weight, setWeight] = useState('');
   const [weightUnit, setWeightUnit] = useState('Gram (g)');
   const [dimensions, setDimensions] = useState({ width: '', height: '', length: '' });
@@ -142,4 +142,4 @@ const WeightShipping = () => {
   );
 };
 
-export default WeightShipping;
+export default WeightShippings;
