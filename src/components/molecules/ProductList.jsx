@@ -19,9 +19,9 @@ const initialProducts = [
   {
     id: 1,
     images: [
-      "https://via.placeholder.com/44x44/FF5733/FFFFFF?text=P1",
-      "https://via.placeholder.com/44x44/33FF57/FFFFFF?text=P2",
-      "https://via.placeholder.com/44x44/3357FF/FFFFFF?text=P3",
+      "/laptop.jpg",
+      "/laptop.jpg",
+      "/laptop.jpg",
     ],
     name: "PC & Laptop",
     category: "Sport & Outdoor",
@@ -32,8 +32,8 @@ const initialProducts = [
   {
     id: 2,
     images: [
-      "https://via.placeholder.com/44x44/FF33AA/FFFFFF?text=P4",
-      "https://via.placeholder.com/44x44/33AAFF/FFFFFF?text=P5",
+      "/mobile.png",
+      "/mobile.png",
     ],
     name: "Smartphone",
     category: "Electronics",
@@ -43,7 +43,7 @@ const initialProducts = [
   },
   {
     id: 3,
-    images: ["https://via.placeholder.com/44x44/AA33FF/FFFFFF?text=P6"],
+    images: ["headphone.jpg"],
     name: "Wireless Headphones",
     category: "Audio",
     stock: 250,
@@ -53,8 +53,8 @@ const initialProducts = [
   {
     id: 4,
     images: [
-      "https://via.placeholder.com/44x44/FF8C33/FFFFFF?text=P7",
-      "https://via.placeholder.com/44x44/33FF8C/FFFFFF?text=P8",
+      "/smartwatch.jpg",
+      "/smartwatch.jpg",
     ],
     name: "Smartwatch",
     category: "Wearables",
@@ -332,6 +332,7 @@ const filteredProducts = useMemo(() => {
                         key={i}
                         src={img}
                         alt="thumb"
+                        title={product.name}
                         className="w-10 h-10 rounded-full object-cover border"
                       />
                     ))}

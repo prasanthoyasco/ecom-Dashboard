@@ -3,7 +3,7 @@ import NotificationModal from "../molecules/NotificationModal";
 import ProfileModal from "../molecules/ProfileModal";
 
 export default function Header() {
-  const [active_notif, setactive_notif] = useState(true);
+  const [active_notif, setactive_notif] = useState(false);
   const [activeProfile, setActiveProfile] = useState(false);
 
   return (
