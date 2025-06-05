@@ -1,7 +1,11 @@
 import { useState } from "react";
+import NotificationModal from "../molecules/NotificationModal";
+import ProfileModal from "../molecules/ProfileModal";
 
 export default function Header() {
   const [active_notif, setactive_notif] = useState(true);
+  const [activeProfile, setActiveProfile] = useState(false);
+
   return (
     <header className="bg-white rounded-tl-[50px] rounded-tr-[50px] py-5 px-8 flex items-center justify-between shadow-sm">
         <div className="text-3xl text-[#42427D]"><span className="font-medium me-1">Welcome</span>,<strong>Admin</strong></div>
@@ -52,11 +56,11 @@ export default function Header() {
           </svg>
 
           {/* Indicator dot */}
-          {active_notif && (
+          {!active_notif && (
             <span className="absolute top-[-2px] right-[-2px] block h-2 w-2 rounded-full bg-red-500" />
           )}
         </button>
-        <div className="w-10 h-10 bg-gray-300 rounded-tl-[10px] rounded-tr-[5px] rounded-br-[10px] rounded-bl-[5px] overflow-hidden">
+        <div className="w-10 h-10 bg-gray-300 rounded-tl-[10px] rounded-tr-[5px] rounded-br-[10px] rounded-bl-[5px] overflow-hidden cursor-pointer" onClick={() => setActiveProfile(!activeProfile)}>
           <img
             src="/admin-img.jpg"
             alt="Admin"
@@ -64,6 +68,8 @@ export default function Header() {
           />
         </div>
       </div>
+       <NotificationModal open={active_notif} onClose={() => setactive_notif(false)} />
+      <ProfileModal open={activeProfile} onClose={() => setActiveProfile(false)} />
     </header>
   );
 }

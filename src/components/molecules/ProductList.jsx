@@ -384,6 +384,7 @@ const filteredProducts = useMemo(() => {
         product={selectedProduct}
         onSave={handleSaveProduct}
       />
+     
     </div>
   );
 }

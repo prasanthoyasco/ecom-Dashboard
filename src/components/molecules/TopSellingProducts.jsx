@@ -39,8 +39,8 @@ export default function TopSellingProducts() {
 
       <ul className="space-y-4">
         {topProducts.map((product, index) => (
-          <li key={product.id} className="flex items-center gap-4">
-            <span className="text-sm text-[#2E2E62] font-semibold w-5">{index + 1}</span>
+          <li key={product.id} className="flex items-center gap-4 py-3 border border-gray-50 hover:bg-gray-100 rounded-[5px]">
+            <span className="text-sm text-[#2E2E62] font-semibold w-5 ps-3">{index + 1}</span>
             <img
               src={product.image}
               alt={product.title}
