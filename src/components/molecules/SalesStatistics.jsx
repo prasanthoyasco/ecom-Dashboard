@@ -44,7 +44,7 @@ export default function SalesStatistics() {
         </button>
       </div>
 
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={500}>
         <LineChart
           data={data}
           margin={{ top: 30, right: 30, left: 0, bottom: 0 }}
