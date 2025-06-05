@@ -6,7 +6,7 @@ import ProductInfoStep from "./ProductInfoStep";
 import ProductDetailStep from "./ProductDetailStep";
 import ProductVariantStep from "./ProductVariantStep";
 import ProductVariantDetails from "./ProductVariantDetails";
-import WeightShipping from "./WeightShipping";
+import WeightShipping from "./WeightShipping.jsx";
 
 const steps = [
   "Product Photo",

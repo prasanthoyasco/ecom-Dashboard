@@ -22,14 +22,15 @@ export default function MarketingPage() {
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">Marketing Dashboard</h1>
       
-      {/* Stats summary at the top */}
-      <CampaignStats stats={sampleStats} />
+
 
       {/* Filter bar for campaigns
       <CampaignFilterBar /> */}
 
       {/* Main campaign management panel */}
       <CampaignManager />
+            {/* Stats summary at the top */}
+      <CampaignStats stats={sampleStats} />
     </div>
   );
 }
