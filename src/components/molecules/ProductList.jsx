@@ -277,7 +277,7 @@ const filteredProducts = useMemo(() => {
 
  {/* Filters - Visible on sm+ or if toggled on mobile */}
 {(showMobileFilters || window.innerWidth >= 640) && (
-  <div className="sticky top-[26px] z-10 bg-white py-3 flex flex-wrap gap-3 border-y mb-4 sm:flex">
+  <div className="sticky top-[26px] sm:top-[-12px] z-10 bg-white py-3 flex flex-wrap gap-3 border-y mb-4 sm:flex">
     <select
       value={statusFilter}
       onChange={(e) => setStatusFilter(e.target.value)}
