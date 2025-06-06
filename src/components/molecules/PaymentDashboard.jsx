@@ -1,5 +1,5 @@
+import { Filter } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Filter } from "lucide-react"; // Import the Filter icon
 
 const dummyData = [
   {
@@ -41,7 +41,8 @@ const PaymentDashboard = () => {
     searchQuery: "",
   });
 
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  // New state to toggle filter visibility on mobile
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     applyFilters();
@@ -72,35 +73,32 @@ const PaymentDashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="px-2 sm:p-6 space-y-8">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold mb-4">Payments Details</h2>
+        <h2 className="text-xl font-semibold sm:mb-4">Payments Details</h2>
 
-        {/* Toggle Filters Button - mobile only */}
+        {/* Toggle Filters Button - visible only on mobile */}
         <button
-          onClick={() => setShowMobileFilters((prev) => !prev)}
-          className="sm:hidden flex items-center gap-2 px-3 py-1 border rounded text-sm text-gray-700 bg-white shadow-sm"
-          aria-expanded={showMobileFilters}
+          onClick={() => setFiltersOpen((prev) => !prev)}
+          className="sm:hidden bg-[#F3F6FF]  text-[#2E2E62] px-4 py-2 rounded focus:outline-none"
+          aria-expanded={filtersOpen}
           aria-controls="filter-panel"
           aria-label="Toggle filters"
         >
-          <Filter size={16} />
-          {/* Optionally add label text if you want */}
-          {/* <span>{showMobileFilters ? "Hide Filters" : "Show Filters"}</span> */}
+         <Filter size={16}/>
         </button>
       </div>
 
-    {/* Filters panel */}
-<div
+     <div
   id="filter-panel"
   className={`
     bg-white p-4 rounded shadow
     flex flex-wrap gap-4
-    ${showMobileFilters ? "block" : "hidden"}
+    ${filtersOpen ? "block" : "hidden"} 
     sm:flex
   `}
 >
-  <div className="flex-grow flex-shrink basis-full md:basis-[48%] lg:basis-[45%]">
+  <div className="flex-grow flex-shrink basis-full md:basis-[48%] lg:basis-[30%]">
     <input
       type="text"
       placeholder="Search by Payment ID or Order ID"

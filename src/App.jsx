@@ -8,6 +8,7 @@ import ProductFormModal from './components/AddProducts/ProductFormModal';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 import MarketingPage from './pages/MarketingPage';
+import PaymentDashboard from './components/molecules/PaymentDashboard';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/products" element={<ProductList />} />
           <Route path="/Addproducts" element={<ProductFormModal />} />
           <Route path="/marketing" element={<MarketingPage />} />
+          <Route path="/payments" element={<PaymentDashboard />} />
           <Route path="*" element={<ComingSoonPage />} />
         </Route>
       </Routes>

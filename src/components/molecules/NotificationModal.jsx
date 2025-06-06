@@ -23,7 +23,7 @@ export default function NotificationModal({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <div className="absolute right-24 top-24 z-50">
+    <div className="absolute right-0 sm:right-24 top-20 sm:top-24 z-50">
       <div
         ref={modalRef}
         className="bg-white w-80 rounded-lg shadow-xl border border-gray-200 p-4"
