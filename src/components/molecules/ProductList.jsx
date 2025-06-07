@@ -8,137 +8,48 @@ import {
   Filter,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Navigate, useNavigate } from "react-router-dom";
+import { getAllProducts, deleteProduct } from "../../api/productApi";
 import EditProductModal from "./EditProductModal";
 
-const initialProducts = [
-  {
-    id: 1,
-    images: [
-      "/laptop.jpg",
-      "/laptop.jpg",
-      "/laptop.jpg",
-    ],
-    name: "PC & Laptop",
-    category: "Sport & Outdoor",
-    stock: 72,
-    price: "₹21",
-    status: "Inactive",
-  },
-  {
-    id: 2,
-    images: [
-      "/mobile.png",
-      "/mobile.png",
-    ],
-    name: "Smartphone",
-    category: "Electronics",
-    stock: 120,
-    price: "₹500",
-    status: "Active",
-  },
-  {
-    id: 3,
-    images: ["headphone.jpg"],
-    name: "Wireless Headphones",
-    category: "Audio",
-    stock: 250,
-    price: "₹150",
-    status: "Active",
-  },
-  {
-    id: 4,
-    images: [
-      "/smartwatch.jpg",
-      "/smartwatch.jpg",
-    ],
-    name: "Smartwatch",
-    category: "Wearables",
-    stock: 45,
-    price: "₹299",
-    status: "Inactive",
-  },
-  {
-    id: 5,
-    images: ["https://via.placeholder.com/44x44/8C33FF/FFFFFF?text=P9"],
-    name: "Gaming Console",
-    category: "Entertainment",
-    stock: 80,
-    price: "₹399",
-    status: "Active",
-  },
-  {
-    id: 6,
-    images: [
-      "https://via.placeholder.com/44x44/FF3333/FFFFFF?text=P10",
-      "https://via.placeholder.com/44x44/33FF33/FFFFFF?text=P11",
-    ],
-    name: "External Hard Drive",
-    category: "Computer Accessories",
-    stock: 180,
-    price: "₹80",
-    status: "Active",
-  },
-  {
-    id: 7,
-    images: ["https://via.placeholder.com/44x44/3333FF/FFFFFF?text=P12"],
-    name: "Webcam",
-    category: "Computer Accessories",
-    stock: 60,
-    price: "₹45",
-    status: "Inactive",
-  },
-  {
-    id: 8,
-    images: [
-      "https://via.placeholder.com/44x44/FFFF33/FFFFFF?text=P13",
-      "https://via.placeholder.com/44x44/33FFFF/FFFFFF?text=P14",
-    ],
-    name: "Bluetooth Speaker",
-    category: "Audio",
-    stock: 110,
-    price: "₹75",
-    status: "Active",
-  },
-  {
-    id: 9,
-    images: ["https://via.placeholder.com/44x44/FF338C/FFFFFF?text=P15"],
-    name: "Fitness Tracker",
-    category: "Wearables",
-    stock: 90,
-    price: "₹120",
-    status: "Active",
-  },
-  {
-    id: 10,
-    images: [
-      "https://via.placeholder.com/44x44/8CFF33/FFFFFF?text=P16",
-      "https://via.placeholder.com/44x44/338CFF/FFFFFF?text=P17",
-    ],
-    name: "Drone",
-    category: "Hobbies",
-    stock: 25,
-    price: "₹700",
-    status: "Inactive",
-  },
-];
 
 export default function ProductList() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
+    const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getAllProducts();
+        setProducts(data.data);
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+        toast.error("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  console.log(products);
+  
 const filteredProducts = useMemo(() => {
+  if (!Array.isArray(products)) return [];
+
   return products.filter(
     (p) =>
       (p.name + p.category + p.id)
@@ -148,6 +59,7 @@ const filteredProducts = useMemo(() => {
       (categoryFilter ? p.category === categoryFilter : true)
   );
 }, [search, statusFilter, categoryFilter, products]);
+
 
 
   const exportToExcel = () => {
@@ -189,40 +101,65 @@ const filteredProducts = useMemo(() => {
     setSelectedProduct(product);
     setEditModalOpen(true);
   };
-  const handleDeleteClick = (product) => {
-    setProducts((prev) => prev.filter((p) => p.id !== product.id)); // remove
+ const handleDeleteClick = (product) => {
+  // Optimistically remove from UI
+  setProducts((prev) => prev.filter((p) => p.id !== product.id));
 
-    const undo = () => {
-      setProducts((prev) => [product, ...prev]); // re-add at top
-    };
+  let undoCalled = false;
 
-    toast(
-      (t) => (
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-sm">
-            Deleted <b>{product.name}</b>
-          </span>
-          <button
-            className="text-blue-600 hover:underline text-sm"
-            onClick={() => {
-              undo();
-              toast.dismiss(t.id);
-            }}
-          >
-            Undo
-          </button>
-        </div>
-      ),
-      {
-        duration: 5000,
-      }
-    );
+  const undo = () => {
+    undoCalled = true;
+    setProducts((prev) => [product, ...prev]); // Re-add product if undo
   };
+
+  toast(
+    (t) => (
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-sm">
+          Deleted <b>{product.name}</b>
+        </span>
+        <button
+          className="text-blue-600 hover:underline text-sm"
+          onClick={() => {
+            undo();
+            toast.dismiss(t.id);
+          }}
+        >
+          Undo
+        </button>
+      </div>
+    ),
+    { duration: 5000 }
+  );
+
+  // After timeout, if not undone, call actual delete API
+  setTimeout(() => {
+    if (!undoCalled) {
+      deleteProduct(product.id)
+        .then(() => {
+          toast.success(`${product.name} deleted from server.`);
+        })
+        .catch(() => {
+          toast.error(`Failed to delete ${product.name} from server.`);
+          // Optional: re-add product on error
+          setProducts((prev) => [product, ...prev]);
+        });
+    }
+  }, 5000); // same as toast duration
+};
 
   const handleSaveProduct = (updatedProduct) => {
     console.log("Updated Product:", updatedProduct);
     // Update product list logic here
   };
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+        <span className="ml-3 text-blue-600 font-semibold text-lg">Loading...</span>
+      </div>
+    );
 
   return (
     <div className="p-4 sm:p-5">
@@ -396,6 +333,5 @@ const filteredProducts = useMemo(() => {
     onSave={handleSaveProduct}
   />
 </div>
-
   );
 }

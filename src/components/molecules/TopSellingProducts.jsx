@@ -36,7 +36,7 @@ export default function TopSellingProducts() {
     <div className="bg-white p-4 sm:p-6 w-full max-w-xl rounded-lg shadow">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
         <h2 className="text-lg sm:text-sm font-semibold text-[#2E2E62]">Top Selling Products</h2>
-        <a href="#" className="text-sm text-[#5840BB] flex items-center gap-1">
+        <a href="topsellers" className="text-sm text-[#5840BB] flex items-center gap-1">
           See all <ChevronRight size={16} />
         </a>
       </div>
