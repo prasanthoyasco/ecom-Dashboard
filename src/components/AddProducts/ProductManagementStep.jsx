@@ -1,28 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-const ProductManagement = ({ onChange }) => {
-  const [isActive, setIsActive] = useState(false);
-  const [stock, setStock] = useState("");
-  const [sku, setSku] = useState("");
+const ProductManagement = ({ isActive: isActiveProp, stock: stockProp, sku: skuProp, onChange }) => {
+  const [isActive, setIsActive] = useState(isActiveProp ?? false);
+  const [stock, setStock] = useState(stockProp ?? "");
+  const [sku, setSku] = useState(skuProp ?? "");
 
-  const handleToggle = () => {
-    const updated = !isActive;
-    setIsActive(updated);
-    onChange && onChange({ isActive: updated, stock, sku });
-  };
+  // Sync with props (e.g., for Edit mode)
+  useEffect(() => {
+    if (isActiveProp !== undefined) setIsActive(isActiveProp);
+    if (stockProp !== undefined) setStock(stockProp);
+    if (skuProp !== undefined) setSku(skuProp);
+  }, [isActiveProp, stockProp, skuProp]);
 
-  const handleStockChange = (e) => {
-    const value = e.target.value;
-    setStock(value);
-    onChange && onChange({ isActive, stock: value, sku });
-  };
+  useEffect(() => {
+    onChange?.({ isActive, stock, sku });
+  }, [isActive, stock, sku]);
 
-  const handleSkuChange = (e) => {
-    const value = e.target.value;
-    setSku(value);
-    onChange && onChange({ isActive, stock, sku: value });
-  };
+  const handleToggle = () => setIsActive((prev) => !prev);
+  const handleStockChange = (e) => setStock(e.target.value);
+  const handleSkuChange = (e) => setSku(e.target.value);
 
   return (
     <div className="relative p-5 mt-8 box before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-[0px_3px_5px_#0000000b] before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-[0px_3px_5px_#0000000b] after:rounded-xl after:z-[-1] after:backdrop-blur-md">
@@ -33,7 +30,6 @@ const ProductManagement = ({ onChange }) => {
         </div>
 
         <div className="mt-5 flex flex-col gap-5">
-
           {/* Product Status */}
           <div className="flex flex-col xl:flex-row items-start">
             <div className="w-full xl:w-64 xl:mr-10">

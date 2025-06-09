@@ -19,6 +19,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getOrders } from "../../api/ordersApi";
 import { assignAwb, trackShipment, getLabel } from "../../api/shiprocketApi";
+import { toast } from 'react-hot-toast';
 import OrderDetailsModal from "./OrderDetailsModal";
 
 export default function TransactionList() {
@@ -53,20 +54,21 @@ console.log(transactions);
   const assignAwbHandler = async (orderId) => {
     try {
       await assignAwb(orderId);
-      alert(`AWB assigned for ${orderId}`);
+       toast.success(`AWB assigned for ${orderId}`);
     } catch (err) {
-      console.error(err);
-      alert("Failed to assign AWB");
+         console.error(err);
+    toast.error("Failed to assign AWB");
     }
   };
 
   const trackShipmentHandler = async (orderId) => {
     try {
       const res = await trackShipment(orderId);
+      toast.success("Tracking details loaded");
       alert(`Tracking details: ${JSON.stringify(res.data)}`);
     } catch (err) {
       console.error(err);
-      alert("Failed to track shipment");
+      toast.error("Failed to track shipment");
     }
   };
 
@@ -79,9 +81,10 @@ console.log(transactions);
       link.href = url;
       link.download = `${orderId}_label.pdf`;
       link.click();
+       toast.success("Label downloaded");
     } catch (err) {
       console.error(err);
-      alert("Failed to download label");
+      toast.error("Failed to download label");
     }
   };
 

@@ -40,7 +40,7 @@ const ProductPhotoUpload = ({ onImagesChange }) => {
               Avoid selling counterfeit products to prevent deletion.{" "}
               <a
                 className="text-indigo-600 font-medium"
-                href=""
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -70,16 +70,16 @@ const ProductPhotoUpload = ({ onImagesChange }) => {
                   {images.map((img, index) => (
                     <div
                       key={index}
-                      className="relative h-28 overflow-hidden rounded-xl shadow"
+                      className="relative h-28 rounded-xl shadow group"
                     >
                       <img
                         src={img.preview}
                         alt={`Preview ${index}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full rounded-xl object-cover"
                       />
                       <button
                         onClick={() => removeImage(index)}
-                        className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                        className="absolute top-[-5px] right-[-5px] bg-red-600 text-white rounded-full p-1 hover:bg-red-700 z-10"
                         title="Remove"
                       >
                         <X size={16} />
@@ -88,27 +88,29 @@ const ProductPhotoUpload = ({ onImagesChange }) => {
                   ))}
                 </div>
 
-                {/* Upload Button */}
+                {/* Upload Area */}
                 <div
-                  className="mt-6 flex justify-center items-center cursor-pointer relative"
+                  className="mt-6 flex justify-center items-center gap-2 cursor-pointer relative"
                   onClick={() => fileInputRef.current.click()}
                 >
-                  <Image className="mr-2 size-4 text-indigo-500" />
+                  <Image className="size-4 text-indigo-500" />
                   <span className="text-indigo-600 font-medium">Upload a file</span> or drag and drop
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    onChange={handleFilesChange}
-                    ref={fileInputRef}
-                  />
                 </div>
+
+                {/* File Input (outside clickable area) */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleFilesChange}
+                  ref={fileInputRef}
+                />
               </div>
             </div>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
   );
 };

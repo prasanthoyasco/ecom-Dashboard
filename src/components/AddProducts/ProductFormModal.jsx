@@ -1,23 +1,29 @@
-import React, { useState } from "react";
-
-// Import all your step components
+import { useState } from "react";
 import ProductPhotoUpload from "./ProductPhotoUpload";
 import ProductInfoStep from "./ProductInfoStep";
 import ProductDetailStep from "./ProductDetailStep";
 import ProductVariantStep from "./ProductVariantStep";
 import ProductVariantDetails from "./ProductVariantDetails";
+import { useNavigate } from "react-router-dom";
 import WeightShippings from "./WeightShippings.jsx";
+import { toast } from "react-hot-toast";
+import { createProduct } from "../../api/productApi.js";
+import ProductManagement from "./ProductManagementStep.jsx";
+import { uploadToCloudinary } from "../../api/imageUpload.js";
+import { v4 as uuidv4 } from "uuid"; // Make sure you have uuid installed
 
 const steps = [
   "Product Photo",
   "Product Info",
   "Product Details",
   "Product Variants",
+  "Product Management",
   "Weight & Shipping",
 ];
 
 const ProductFormModal = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const navigate = useNavigate();
 
   // Step-wise data
   const [productPhotos, setProductPhotos] = useState([]);
@@ -32,10 +38,16 @@ const ProductFormModal = () => {
     videoUrl: "",
   });
   const [variants, setVariants] = useState([]);
+  const [productManagementData, setProductManagementData] = useState({
+    isActive: false,
+    stock: "",
+    sku: "",
+  });
   const [weightShippingData, setWeightShippingData] = useState({
     weight: "",
     weightUnit: "Gram (g)",
     dimensions: { width: "", height: "", length: "" },
+    dimensionsUnit: 'inch',
     insurance: "optional",
     shippingService: "standard",
     preOrder: false,
@@ -47,8 +59,13 @@ const ProductFormModal = () => {
   const handleProductInfoChange = ({ target: { name, value } }) => {
     setProductInfo((prev) => ({ ...prev, [name]: value }));
   };
+  const handleProductManagementChange = (data) => {
+    setProductManagementData(data);
+  };
 
-  const handleProductDetailChange = ({ target: { name, value, type, checked } }) => {
+  const handleProductDetailChange = ({
+    target: { name, value, type, checked },
+  }) => {
     setProductDetails((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -66,8 +83,8 @@ const ProductFormModal = () => {
 
   // Variant Handlers
   const addVariant = () => {
-    if (variants.length >= 2) {
-      alert("You can add a maximum of 2 variant types.");
+    if (variants?.length >= 3) {
+      toast.error("You can add a maximum of 3 variant types.");
       return;
     }
     setVariants([...variants, { id: Date.now(), name: "", options: [] }]);
@@ -78,7 +95,9 @@ const ProductFormModal = () => {
   };
 
   const updateVariantName = (id, newName) => {
-    setVariants(variants.map((v) => (v.id === id ? { ...v, name: newName } : v)));
+    setVariants(
+      variants.map((v) => (v.id === id ? { ...v, name: newName } : v))
+    );
   };
 
   const addVariantOption = (variantId, value) => {
@@ -109,75 +128,149 @@ const ProductFormModal = () => {
   const nextStep = () => {
     switch (currentStep) {
       case 0:
-        if (!productPhotos.length) return alert("Upload at least one product photo.");
+        if (!productPhotos?.length) {
+          toast.error("Upload at least one product photo.");
+          return;
+        }
         break;
       case 1:
-        if (!productInfo.productName || productInfo.productName.length < 40)
-          return alert("Product name must be at least 40 characters.");
-        if (!productInfo.category) return alert("Category is required.");
+        if (!productInfo.productName || productInfo.productName?.length < 20) {
+          toast.error("Product name must be at least 20 characters.");
+          return;
+        }
+        if (!productInfo.category) {
+          toast.error("Category is required.");
+          return;
+        }
         break;
       case 2:
-        if (!productDetails.condition || !productDetails.description)
-          return alert("Condition and description are required.");
-        if (productDetails.description.length < 100)
-          return alert("Description should be at least 100 characters.");
+        if (!productDetails.description) {
+          toast.error("Description is required.");
+          return;
+        }
+        if (productDetails.description?.length < 30) {
+          toast.error("Description should be at least 30 characters.");
+          return;
+        }
         break;
       case 4:
+        if (!productManagementData.sku) {
+          toast.error("SKU is required.");
+          return;
+        }
+        break;
+      case 5:
         const { weight, dimensions } = weightShippingData;
-          const { width, height, length } = dimensions || {};
-
-          if (
-            !weight || isNaN(weight) || Number(weight) <= 0 ||
-            !width || isNaN(width) || Number(width) <= 0 ||
-            !height || isNaN(height) || Number(height) <= 0 ||
-            !length || isNaN(length) || Number(length) <= 0
-          ) {
-            return alert("Enter valid weight and all dimensions (width, height, length).");
-          }
-          break;
+        const { width, height, length } = dimensions || {};
+        if (
+          !weight ||
+          isNaN(weight) ||
+          Number(weight) <= 0 ||
+          !width ||
+          isNaN(width) ||
+          Number(width) <= 0 ||
+          !height ||
+          isNaN(height) ||
+          Number(height) <= 0 ||
+          !length ||
+          isNaN(length) ||
+          Number(length) <= 0
+        ) {
+          toast.error(
+            "Enter valid weight and all dimensions (width, height, length)."
+          );
+          return;
+        }
+        break;
     }
-    if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
+    if (currentStep < steps?.length - 1) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = () => {
-    const finalData = {
-      productPhotos: productPhotos.map((file) => file.name),
-      productInfo,
-      productDetails,
-      variants,
-      WeightShippings: weightShippingData,
-    };
-    console.log("Submitting:", finalData);
-    alert("Form submitted! Check console.");
+  const handleSubmit = async () => {
+    try {
+      // Upload all productPhotos to Cloudinary
+      const uploadedPhotoUrls = await Promise.all(
+        productPhotos.map((file) => uploadToCloudinary(file))
+      );
+
+      // Flatten variants into [{ name: ..., value: ... }]
+      const flattenedVariants = variants.flatMap((variant) =>
+        variant.options.map((opt) => ({
+          name: variant.name,
+          value: opt.value,
+        }))
+      );
+
+      const finalData = {
+        id: uuidv4(),
+        images: uploadedPhotoUrls,
+        name: productInfo.productName,
+        category: productInfo.category,
+        subcategory: productInfo.subcategory,
+        productVideoUrl: productDetails.videoUrl,
+        variant: flattenedVariants,
+        shipping: {
+          weight: Number(weightShippingData.weight),
+          size: {
+            width: Number(weightShippingData.dimensions.width),
+            height: Number(weightShippingData.dimensions.height),
+            length: Number(weightShippingData.dimensions?.length),
+            unit: "inch",
+          },
+        },
+        stock: Number(productManagementData.stock || 0),
+        price: "0",
+        SKU: productManagementData.sku || "",
+        status: productManagementData.isActive ? "Active" : "Inactive",
+      };
+
+      const response = await createProduct(finalData);
+      console.log("Submitted Successfully:", response);
+      toast.success("Product created successfully!");
+      navigate("/products");
+    } catch (error) {
+      console.error("Error creating product:", error);
+      toast.error("Failed to submit product. Please try again.");
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl">
-      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Add New Product</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
+        Add New Product
+      </h1>
 
       <div className="mb-8 text-center text-lg font-medium text-indigo-700">
-        Step {currentStep + 1} of {steps.length}: {steps[currentStep]}
+        Step {currentStep + 1} of {steps?.length}: {steps[currentStep]}
       </div>
 
       {/* Step Components */}
-      {currentStep === 0 && <ProductPhotoUpload onImagesChange={handleProductPhotosChange} />}
+      {currentStep === 0 && (
+        <ProductPhotoUpload onImagesChange={handleProductPhotosChange} />
+      )}
       {currentStep === 1 && (
         <ProductInfoStep
           productName={productInfo.productName}
           setProductName={(val) =>
-            handleProductInfoChange({ target: { name: "productName", value: val } })
+            handleProductInfoChange({
+              target: { name: "productName", value: val },
+            })
           }
           category={productInfo.category}
           setCategory={(val) =>
-            handleProductInfoChange({ target: { name: "category", value: val } })
+            handleProductInfoChange({
+              target: { name: "category", value: val },
+            })
           }
           subcategory={productInfo.subcategory}
           setSubcategory={(val) =>
-            handleProductInfoChange({ target: { name: "subcategory", value: val } })
+            handleProductInfoChange({
+              target: { name: "subcategory", value: val },
+            })
           }
           categories={["Electronics", "Apparel", "Home Goods", "Books"]}
           subcategories={
@@ -204,7 +297,7 @@ const ProductFormModal = () => {
       {currentStep === 3 && (
         <>
           <ProductVariantStep onAddVariantClick={addVariant} />
-          {variants.length === 0 && (
+          {variants?.length === 0 && (
             <p className="mt-4 text-center text-gray-500">
               No variants added. Click "Add Variant" to begin.
             </p>
@@ -223,23 +316,42 @@ const ProductFormModal = () => {
         </>
       )}
       {currentStep === 4 && (
-        <WeightShippings
-          onChange={handleWeightShippingChange}
-          weight={weightShippingData.weight}
-          setWeight={(val) => setWeightShippingData((prev) => ({ ...prev, weight: val }))}
-          weightUnit={weightShippingData.weightUnit}
-          setWeightUnit={(val) => setWeightShippingData((prev) => ({ ...prev, weightUnit: val }))}
-          dimensions={weightShippingData.dimensions}
-          setDimensions={(dims) => setWeightShippingData((prev) => ({ ...prev, dimensions: dims }))}
-          insurance={weightShippingData.insurance}
-          setInsurance={(val) => setWeightShippingData((prev) => ({ ...prev, insurance: val }))}
-          shippingService={weightShippingData.shippingService}
-          setShippingService={(val) =>
-            setWeightShippingData((prev) => ({ ...prev, shippingService: val }))
-          }
-          preOrder={weightShippingData.preOrder}
-          setPreOrder={(val) => setWeightShippingData((prev) => ({ ...prev, preOrder: val }))}
-        />
+        <ProductManagement onChange={handleProductManagementChange} />
+      )}
+
+      {currentStep === 5 && (
+       <WeightShippings
+  onChange={handleWeightShippingChange}
+  weight={weightShippingData.weight}
+  setWeight={(val) =>
+    setWeightShippingData((prev) => ({ ...prev, weight: val }))
+  }
+  weightUnit={weightShippingData.weightUnit}
+  setWeightUnit={(val) =>
+    setWeightShippingData((prev) => ({ ...prev, weightUnit: val }))
+  }
+  dimensions={weightShippingData.dimensions}
+  setDimensions={(dims) =>
+    setWeightShippingData((prev) => ({ ...prev, dimensions: dims }))
+  }
+  dimensionsUnit={weightShippingData.dimensionsUnit}
+  setDimensionsUnit={(val) =>
+    setWeightShippingData((prev) => ({ ...prev, dimensionsUnit: val }))
+  }
+  insurance={weightShippingData.insurance}
+  setInsurance={(val) =>
+    setWeightShippingData((prev) => ({ ...prev, insurance: val }))
+  }
+  shippingService={weightShippingData.shippingService}
+  setShippingService={(val) =>
+    setWeightShippingData((prev) => ({ ...prev, shippingService: val }))
+  }
+  preOrder={weightShippingData.preOrder}
+  setPreOrder={(val) =>
+    setWeightShippingData((prev) => ({ ...prev, preOrder: val }))
+  }
+/>
+
       )}
 
       {/* Navigation Buttons */}
@@ -256,7 +368,7 @@ const ProductFormModal = () => {
           Back
         </button>
 
-        {currentStep < steps.length - 1 ? (
+        {currentStep < steps?.length - 1 ? (
           <button
             onClick={nextStep}
             className="px-6 py-2 rounded-lg font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-200"

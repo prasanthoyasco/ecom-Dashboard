@@ -1,12 +1,12 @@
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, Paperclip, Plus } from "lucide-react";
 
 const ProductDetailStep = ({
-  condition,
-  setCondition,
   description,
   setDescription,
   onAddVideoClick,
 }) => {
+  console.log(description);
+  
   return (
     <div className="relative p-5 mt-8">
       <div className="before:absolute before:inset-0 before:mx-3 before:-mb-3 before:border before:border-foreground/10 before:bg-background/30 before:shadow-md before:z-[-1] before:rounded-xl after:absolute after:inset-0 after:border after:border-foreground/10 after:bg-background after:shadow-md after:rounded-xl after:z-[-1] after:backdrop-blur-md" />
@@ -17,7 +17,7 @@ const ProductDetailStep = ({
         </div>
 
         <div className="mt-5 flex flex-col gap-5">
-          {/* Condition */}
+          {/* Condition
           <div className="flex flex-col xl:flex-row items-start">
             <div className="w-full xl:w-64 xl:mr-10">
               <div className="font-medium">Condition</div>
@@ -42,7 +42,7 @@ const ProductDetailStep = ({
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Product Description */}
           <div className="flex flex-col xl:flex-row items-start">
@@ -66,7 +66,7 @@ const ProductDetailStep = ({
                 className="w-full rounded-md border px-3 py-2 bg-white text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
               />
               <p className="text-right text-xs text-gray-500 mt-1">
-                {description.length}/2000
+                {description?.length}/2000
               </p>
             </div>
           </div>
@@ -78,7 +78,7 @@ const ProductDetailStep = ({
               <p className="mt-3 text-xs opacity-70 leading-relaxed">
                 Add a video so that buyers are more interested in your product.{" "}
                 <a
-                  href="https://themeforest.net/item/midone-jquery-tailwindcss-html-admin-template/26366820"
+                  href="https://design4users.com/wp-content/uploads/2021/03/beauty-commerce-webdesign.png"
                   target="_blank"
                   className="text-indigo-600 font-medium"
                   rel="noreferrer"
@@ -88,13 +88,14 @@ const ProductDetailStep = ({
               </p>
             </div>
             <div className="mt-3 xl:mt-0 flex-1 w-full">
+              <input type="url" placeholder="Add Video URL(Youtube)" className="w-full rounded-md border px-3 py-2 bg-white text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"/>
               <button
                 type="button"
                 onClick={onAddVideoClick}
-                className="inline-flex items-center gap-2 h-10 px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50"
+                className="inline-flex items-center mt-2 gap-2 h-10 px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50"
               >
-                <Plus className="size-4" />
-                Add Video URL
+                <Paperclip className="size-4" />
+                Upload Video
               </button>
             </div>
           </div>

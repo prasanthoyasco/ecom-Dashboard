@@ -1,8 +1,18 @@
 import React, { useEffect, useRef } from "react";
 import { User, Settings, LogOut, X } from "lucide-react";
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileModal({ open, onClose }) {
   const modalRef = useRef();
+   const navigate = useNavigate();
+
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  toast.success('You have been logged out');
+  navigate('/login');
+};
+
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -48,19 +58,19 @@ export default function ProfileModal({ open, onClose }) {
         <ul className="text-sm divide-y divide-gray-100">
           <li
             className="flex items-center gap-2 py-2 px-1 cursor-pointer hover:text-blue-600"
-            onClick={() => console.log("Profile")}
+            onClick={() => navigate('/profile')}
           >
             <User className="w-4 h-4" /> Profile
           </li>
-          <li
+          {/* <li
             className="flex items-center gap-2 py-2 px-1 cursor-pointer hover:text-blue-600"
             onClick={() => console.log("Settings")}
           >
             <Settings className="w-4 h-4" /> Settings
-          </li>
+          </li> */}
           <li
             className="flex items-center gap-2 py-2 px-1 cursor-pointer text-red-500 hover:text-red-700"
-            onClick={() => console.log("Logout")}
+            onClick={handleLogout}
           >
             <LogOut className="w-4 h-4" /> Logout
           </li>

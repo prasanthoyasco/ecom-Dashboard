@@ -1,4 +1,5 @@
 import { Filter } from "lucide-react";
+import { toast } from 'react-hot-toast';
 import React, { useEffect, useState } from "react";
 
 const dummyData = [
@@ -69,7 +70,7 @@ const PaymentDashboard = () => {
   };
 
   const handleRefund = (paymentId) => {
-    alert(`Refund initiated for: ${paymentId}`);
+     toast.success(`Payment Refund Initiated ${paymentId}`);
   };
 
   return (
@@ -192,15 +193,15 @@ const PaymentDashboard = () => {
                 </td>
                 <td className="border px-4 py-2">₹{txn.amount}</td>
                 <td className="border px-4 py-2">{txn.gateway}</td>
-                <td className="border px-4 py-2">
-                  {txn.status === "success" && (
+                <td className="border px-4 py-2 text-center">
+                  {txn.status === "success" ? (
                     <button
                       onClick={() => handleRefund(txn.payment_id)}
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                     >
                       Refund
                     </button>
-                  )}
+                  ): <p className="text-sm">Payment need to be <span className="text-green-600">success</span> to refund</p>}
                 </td>
               </tr>
             ))}

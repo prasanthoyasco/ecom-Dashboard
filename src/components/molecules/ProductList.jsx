@@ -15,7 +15,6 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Navigate, useNavigate } from "react-router-dom";
 import { getAllProducts, deleteProduct } from "../../api/productApi";
-import EditProductModal from "./EditProductModal";
 
 
 export default function ProductList() {
@@ -23,9 +22,7 @@ export default function ProductList() {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("");
     const [loading, setLoading] = useState(true);
 
@@ -98,8 +95,8 @@ const filteredProducts = useMemo(() => {
     doc.save("products.pdf");
   };
   const handleEditClick = (product) => {
-    setSelectedProduct(product);
-    setEditModalOpen(true);
+    console.log(product.id);
+    navigate(`/editproduct/${product._id}`)
   };
  const handleDeleteClick = (product) => {
   // Optimistically remove from UI
@@ -108,9 +105,15 @@ const filteredProducts = useMemo(() => {
   let undoCalled = false;
 
   const undo = () => {
-    undoCalled = true;
-    setProducts((prev) => [product, ...prev]); // Re-add product if undo
-  };
+  undoCalled = true;
+  setProducts((prev) => [product, ...prev]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  setSearch("");
+  setStatusFilter("");
+  setCategoryFilter("");
+
+};
+
 
   toast(
     (t) => (
@@ -324,14 +327,6 @@ const filteredProducts = useMemo(() => {
   <div className="mt-4 text-gray-500 text-sm">
     Showing {filteredProducts.length} of {products.length} products
   </div>
-
-  {/* Modal */}
-  <EditProductModal
-    isOpen={editModalOpen}
-    onClose={() => setEditModalOpen(false)}
-    product={selectedProduct}
-    onSave={handleSaveProduct}
-  />
 </div>
   );
 }
