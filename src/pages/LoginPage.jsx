@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeClosed } from 'lucide-react';
+import { loginUser } from '../api/authApi'; // adjust path as needed
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -20,22 +21,11 @@ export default function LoginPage() {
     if (emailError) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        navigate('/');
-      } else {
-        alert(data.message || 'Login failed');
-      }
+      const data = await loginUser({ email, password });
+      localStorage.setItem('token', data.token);
+      navigate('/');
     } catch (err) {
-      console.error(err);
-      alert('Server error');
+      alert(err.message);
     }
   };
 
@@ -46,8 +36,7 @@ export default function LoginPage() {
         className="hidden md:flex w-1/2 bg-cover bg-center"
         style={{ backgroundImage: `url('/login-side.png')` }}
       ></div>
-  {/* "email": "admin@gmail.com",
-  "password": "Admin@1234" */}
+
       {/* Right side form */}
       <div className="flex w-full md:w-1/2 justify-center items-center p-8 bg-gray-50">
         <div className="max-w-md w-full">
@@ -59,10 +48,10 @@ export default function LoginPage() {
                 type="email"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#42427d94] focus:border-[#42427D]"
                 value={email}
-                 onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => {
-                    setEmailTouched(true);
-                    validateEmail(email);  
+                  setEmailTouched(true);
+                  validateEmail(email);
                 }}
                 required
               />
@@ -82,7 +71,7 @@ export default function LoginPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-10 cursor-pointer text-gray-500"
               >
-                {showPassword ?  <Eye size={18} /> : <EyeClosed size={18} />}
+                {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
               </span>
             </div>
 
