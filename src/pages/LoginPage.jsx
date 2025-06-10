@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeClosed } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { loginUser } from '../api/authApi'; // adjust path as needed
 
 export default function LoginPage() {
@@ -23,9 +24,15 @@ export default function LoginPage() {
     try {
       const data = await loginUser({ email, password });
       localStorage.setItem('token', data.token);
+      if (data.user.role === 'admin') {
+        navigate('/');
+        toast.success('Logged In Successfully')
+      } else {
+        toast.error('Access denied. Only admins can access this portal.');
+      }
       navigate('/');
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message)
     }
   };
 
@@ -83,7 +90,7 @@ export default function LoginPage() {
             </button>
 
             <p className="text-center text-sm text-gray-600">
-              Forgot your password? <a href="/reset" className="text-[#42427D] hover:underline">Reset here</a>
+              Forgot your password? <a href="/forgot-password" className="text-[#42427D] hover:underline">Reset here</a>
             </p>
           </form>
         </div>

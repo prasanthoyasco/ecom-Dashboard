@@ -14,6 +14,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { Toaster } from 'react-hot-toast';
 import ProfilePage from './pages/profilepage';
 import EditProduct from './components/AddProducts/EditProduct';
+import ChatBot from './components/ChatBot';
+import ForgotPassword from './components/ForgotPassword';
 
 export default function App() {
   return (
@@ -21,6 +23,7 @@ export default function App() {
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
@@ -40,6 +43,7 @@ export default function App() {
         </Route>
       </Routes>
       <Toaster position="bottom-center" />
+      <ChatBot/>
     </Router>
   );
 }
