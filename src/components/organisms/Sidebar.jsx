@@ -37,7 +37,7 @@ export default function Sidebar({ setSidebarOpen }) {
       <div className={`mb-10 px-1 flex items-center gap-2 ${collapsed ? 'justify-center' : 'px-5'}`}>
         <LucideShoppingCart size={24} />
         {!collapsed && (
-          <h1 className="text-2xl font-bold transition-all duration-300 ease-in-out select-text">ShopNow</h1>
+          <a href='/' className="text-2xl font-bold transition-all duration-300 ease-in-out select-text">ShopNow</a>
         )}
         {/* Toggle Button */}
         <button
