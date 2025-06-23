@@ -13,7 +13,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAllProducts, deleteProduct } from "../../api/productApi";
 
 export default function ProductList() {
@@ -133,9 +133,9 @@ export default function ProductList() {
     // After timeout, if not undone, call actual delete API
     setTimeout(() => {
       if (!undoCalled) {
-        deleteProduct(product.id)
+        deleteProduct(product._id)
           .then(() => {
-            toast.success(`${product.name} deleted from server.`);
+            toast.success(`${product.name} deleted`);
           })
           .catch(() => {
             toast.error(`Failed to delete ${product.name} from server.`);
