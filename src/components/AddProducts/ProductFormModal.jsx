@@ -24,6 +24,8 @@ const steps = [
 const ProductFormModal = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
+  const [submitLoading, setSubmitLoading] = useState(false);
+
 
   // Step-wise data
   const [productPhotos, setProductPhotos] = useState([]);
@@ -192,6 +194,7 @@ const ProductFormModal = () => {
   };
 
   const handleSubmit = async () => {
+    setSubmitLoading(true);
     try {
       // Upload all productPhotos to Cloudinary
       const uploadedPhotoUrls = await Promise.all(
@@ -236,7 +239,9 @@ const ProductFormModal = () => {
     } catch (error) {
       console.error("Error creating product:", error);
       toast.error("Failed to submit product. Please try again.");
-    }
+    } finally {
+    setSubmitLoading(false);
+  }
   };
 
   return (
@@ -385,10 +390,23 @@ const ProductFormModal = () => {
         ) : (
           <button
             onClick={handleSubmit}
-            className="px-6 py-2 rounded-lg font-semibold bg-green-600 text-white hover:bg-green-700 transition-colors duration-200"
+            disabled={submitLoading}
+            className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 d-flex align-items-center ${
+              submitLoading
+                ? "bg-green-400 text-white cursor-not-allowed"
+                : "bg-green-600 text-white hover:bg-green-700"
+            }`}
           >
-            Submit Product
+            {submitLoading && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            )}
+            {submitLoading ? "Submitting..." : "Submit Product"}
           </button>
+
         )}
       </div>
     </div>
