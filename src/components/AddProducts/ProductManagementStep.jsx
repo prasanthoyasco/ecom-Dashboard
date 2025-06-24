@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-const ProductManagement = ({ isActive: isActiveProp, stock: stockProp, sku: skuProp, onChange }) => {
+const ProductManagement = ({ isActive: isActiveProp, stock: stockProp, sku: skuProp, onChange,price: priceProp, }) => {
   const [isActive, setIsActive] = useState(isActiveProp ?? false);
   const [stock, setStock] = useState(stockProp ?? "");
   const [sku, setSku] = useState(skuProp ?? "");
+   const [price, setPrice] = useState(priceProp ?? "");
 
   // Sync with props (e.g., for Edit mode)
   useEffect(() => {
     if (isActiveProp !== undefined) setIsActive(isActiveProp);
     if (stockProp !== undefined) setStock(stockProp);
     if (skuProp !== undefined) setSku(skuProp);
-  }, [isActiveProp, stockProp, skuProp]);
+   if (priceProp !== undefined) setPrice(priceProp);
+  }, [isActiveProp, stockProp, skuProp, priceProp]);
 
-  useEffect(() => {
-    onChange?.({ isActive, stock, sku });
-  }, [isActive, stock, sku]);
+    useEffect(() => {
+    onChange?.({ isActive, stock, sku, price });
+  }, [isActive, stock, sku, price]);
 
   const handleToggle = () => setIsActive((prev) => !prev);
   const handleStockChange = (e) => setStock(e.target.value);
@@ -73,6 +75,25 @@ const ProductManagement = ({ isActive: isActiveProp, stock: stockProp, sku: skuP
               />
             </div>
           </div>
+          {/* Product Price */}
+          <div className="flex flex-col xl:flex-row items-start">
+            <div className="w-full xl:w-64 xl:mr-10">
+              <div className="font-medium">Product Price</div>
+              <div className="mt-3 text-xs text-gray-500">
+                This will be the base price for the product.
+              </div>
+            </div>
+            <div className="mt-3 xl:mt-0 w-full flex-1">
+              <input
+                type="number"
+                placeholder="Enter Product Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="h-10 w-full rounded-md border px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
 
           {/* SKU */}
           <div className="flex flex-col xl:flex-row items-start">

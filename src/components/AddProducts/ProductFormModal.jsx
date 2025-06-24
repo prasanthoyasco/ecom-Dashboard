@@ -42,6 +42,7 @@ const ProductFormModal = () => {
     isActive: false,
     stock: "",
     sku: "",
+    price: "",
   });
   const [weightShippingData, setWeightShippingData] = useState({
     weight: "",
@@ -223,7 +224,7 @@ const ProductFormModal = () => {
           },
         },
         stock: Number(productManagementData.stock || 0),
-        price: "0",
+         price: Number(productManagementData.price || 0),
         SKU: productManagementData.sku || "",
         status: productManagementData.isActive ? "Active" : "Inactive",
       };
@@ -316,8 +317,14 @@ const ProductFormModal = () => {
         </>
       )}
       {currentStep === 4 && (
-        <ProductManagement onChange={handleProductManagementChange} />
-      )}
+  <ProductManagement
+    isActive={productManagementData.isActive}
+    stock={productManagementData.stock}
+    sku={productManagementData.sku}
+    price={productManagementData.price}
+    onChange={handleProductManagementChange}
+  />
+)}
 
       {currentStep === 5 && (
        <WeightShippings
