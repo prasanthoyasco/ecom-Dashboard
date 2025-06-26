@@ -333,9 +333,27 @@ export default function ProductList() {
                     onChange={() => handleCheckboxChange(product.id)}
                   />
                 </td>
-                <td className="p-1">
-                  <img src={product.images[0]} alt="thumb" className="w-10 h-10 rounded-full object-cover" />
-                </td>
+                 <td className="p-1">
+                    <div className="flex items-center -space-x-2">
+                      {product.images.slice(0, 1).map((img, i) => (
+                        <img
+                          key={i}
+                          src={img}
+                          alt="thumb"
+                          title={product.name}
+                          className="w-10 h-10 rounded-full object-cover border-2 border-white"
+                        />
+                      ))}
+                      {product.images.length > 1 && (
+                        <div
+                          className="w-10 h-10 rounded-full text-sm text-white bg-gray-500 flex items-center justify-center border-2 border-white bg-cover bg-center"
+                          style={{ backgroundImage: `url(${product.images[1]})` }}
+                        >
+                          +{product.images.length - 1}
+                        </div>
+                      )}
+                    </div>
+                  </td>
                 <td className="p-3">{product.name}</td>
                 <td className="p-3">{categoryIdToNameMap[product.category] || "Unknown"}</td>
                 <td className="p-3">{product.stock}</td>
