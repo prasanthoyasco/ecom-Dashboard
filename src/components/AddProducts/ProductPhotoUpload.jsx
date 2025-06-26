@@ -1,26 +1,40 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Lightbulb, Image, X, ChevronDown } from "lucide-react";
 
-const ProductPhotoUpload = ({ onImagesChange }) => {
+const ProductPhotoUpload = ({ initialImages = [], onImagesChange }) => {
   const fileInputRef = useRef(null);
   const [images, setImages] = useState([]);
 
+  // Populate existing images from props
+  useEffect(() => {
+    if (initialImages?.length) {
+      const formatted = initialImages.map((img) =>
+        typeof img === "string" || img.secure_url
+          ? { preview: img.secure_url || img }
+          : { file: img, preview: URL.createObjectURL(img) }
+      );
+      setImages(formatted);
+    }
+  }, [initialImages]);
+
   const handleFilesChange = (e) => {
     const files = Array.from(e.target.files);
-    const previews = files.map(file => ({
+    const previews = files.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
     const newImages = [...images, ...previews].slice(0, 5); // max 5
     setImages(newImages);
-    onImagesChange && onImagesChange(newImages.map(img => img.file));
+    onImagesChange?.(
+      newImages.map((img) => img.file || img.preview) // return either file or URL
+    );
   };
 
   const removeImage = (index) => {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
-    onImagesChange && onImagesChange(newImages.map(img => img.file));
+    onImagesChange?.(newImages.map((img) => img.file || img.preview));
   };
 
   return (
@@ -38,12 +52,7 @@ const ProductPhotoUpload = ({ onImagesChange }) => {
             <Lightbulb className="text-yellow-500 h-5 w-5" />
             <div className="ml-2">
               Avoid selling counterfeit products to prevent deletion.{" "}
-              <a
-                className="text-indigo-600 font-medium"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="text-indigo-600 font-medium" href="#">
                 Learn More
               </a>
             </div>
@@ -68,10 +77,7 @@ const ProductPhotoUpload = ({ onImagesChange }) => {
                 {/* Uploaded Images */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 px-4">
                   {images.map((img, index) => (
-                    <div
-                      key={index}
-                      className="relative h-28 rounded-xl shadow group"
-                    >
+                    <div key={index} className="relative h-28 rounded-xl shadow group">
                       <img
                         src={img.preview}
                         alt={`Preview ${index}`}
@@ -97,7 +103,7 @@ const ProductPhotoUpload = ({ onImagesChange }) => {
                   <span className="text-indigo-600 font-medium">Upload a file</span> or drag and drop
                 </div>
 
-                {/* File Input (outside clickable area) */}
+                {/* File Input */}
                 <input
                   type="file"
                   accept="image/*"

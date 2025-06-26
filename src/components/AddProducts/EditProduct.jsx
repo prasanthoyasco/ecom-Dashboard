@@ -7,7 +7,7 @@ import ProductPhotoUpload from "./ProductPhotoUpload";
 import ProductInfoStep from "./ProductInfoStep";
 import ProductDetailStep from "./ProductDetailStep";
 import ProductVariantStep from "./ProductVariantStep";
-import ProductVariant  from "./ProductVariantDetails";
+import ProductVariant from "./ProductVariantDetails";
 import ProductManagement from "./ProductManagementStep";
 import WeightShippings from "./WeightShippings";
 
@@ -34,13 +34,14 @@ const EditProduct = () => {
     price: "",
   });
   const [weightShippingData, setWeightShippingData] = useState({
-  weight: "",
-  weightUnit: "Gram (g)",
-  dimensions: { width: "", height: "", length: "" },
-  insurance: "optional",
-  shippingService: "standard",
-  preOrder: false,
-});
+    weight: "",
+    weightUnit: "Gram (g)",
+    dimensions: { width: "", height: "", length: "" },
+    insurance: "optional",
+    shippingService: "standard",
+    preOrder: false,
+    dimensionsUnit: "inch",
+  });
 
   const [loading, setLoading] = useState(true);
 
@@ -73,7 +74,15 @@ const EditProduct = () => {
           price: data.price || "",
         });
 
-        setWeightShippingData(data.shipping);
+        setWeightShippingData({
+          weight: data.shipping?.weight || "",
+          weightUnit: data.shipping?.weightUnit || "Gram (g)",
+          dimensions: data.shipping?.dimensions || { width: "", height: "", length: "" },
+          insurance: data.shipping?.insurance || "optional",
+          shippingService: data.shipping?.shippingService || "standard",
+          preOrder: data.shipping?.preOrder || false,
+          dimensionsUnit: data.shipping?.dimensionsUnit || "inch",
+        });
 
         setLoading(false);
       } catch (err) {
@@ -133,56 +142,94 @@ const EditProduct = () => {
       />
 
       <ProductInfoStep
-  productName={productInfo.productName}
-  setProductName={(val) =>
-    setProductInfo((prev) => ({ ...prev, productName: val }))
-  }
-  category={productInfo.category}
-  setCategory={(val) =>
-    setProductInfo((prev) => ({ ...prev, category: val }))
-  }
-  subcategory={productInfo.subcategory}
-  setSubcategory={(val) =>
-    setProductInfo((prev) => ({ ...prev, subcategory: val }))
-  }
-/>
-
+        productName={productInfo.productName}
+        setProductName={(val) =>
+          setProductInfo((prev) => ({ ...prev, productName: val }))
+        }
+        category={productInfo.category}
+        setCategory={(val) =>
+          setProductInfo((prev) => ({ ...prev, category: val }))
+        }
+        subcategory={productInfo.subcategory}
+        setSubcategory={(val) =>
+          setProductInfo((prev) => ({ ...prev, subcategory: val }))
+        }
+      />
 
       <ProductDetailStep
-  description={productDetails.description}
-  setDescription={(val) =>
-    setProductDetails((prev) => ({ ...prev, description: val }))
-  }
-  onAddVideoClick={() => {
-    const urlInput = document.querySelector("input[type='url']");
-    if (urlInput) {
-      setProductDetails((prev) => ({
-        ...prev,
-        videoUrl: urlInput.value,
-      }));
-    }
-  }}
-/>
-
+        description={productDetails.description}
+        setDescription={(val) =>
+          setProductDetails((prev) => ({ ...prev, description: val }))
+        }
+        onAddVideoClick={() => {
+          const urlInput = document.querySelector("input[type='url']");
+          if (urlInput) {
+            setProductDetails((prev) => ({
+              ...prev,
+              videoUrl: urlInput.value,
+            }));
+          }
+        }}
+      />
 
       <ProductVariantStep
-        variants={variants}
-        setVariants={setVariants}
+        onAddVariantClick={() => setVariants([...variants, ""])}
       />
-      <ProductVariant
-        variantName={variants[0]}
-      />
+
+      {variants.map((variantName, index) => (
+        <ProductVariant
+          key={index}
+          variantName={variantName}
+          onRemove={() => {
+            const updated = [...variants];
+            updated.splice(index, 1);
+            setVariants(updated);
+          }}
+          onNameChange={(newName) => {
+            const updated = [...variants];
+            updated[index] = newName;
+            setVariants(updated);
+          }}
+        />
+      ))}
 
       <ProductManagement
-  isActive={productManagementData.isActive}
-  stock={productManagementData.stock}
-  sku={productManagementData.sku}
-/>
-
+        isActive={productManagementData.isActive}
+        stock={productManagementData.stock}
+        sku={productManagementData.sku}
+        price={productManagementData.price}
+        onChange={setProductManagementData}
+      />
 
       <WeightShippings
-        weightShippingData={weightShippingData}
-        setWeightShippingData={setWeightShippingData}
+        weight={weightShippingData.weight}
+        setWeight={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, weight: val }))
+        }
+        weightUnit={weightShippingData.weightUnit}
+        setWeightUnit={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, weightUnit: val }))
+        }
+        dimensions={weightShippingData.dimensions}
+        setDimensions={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, dimensions: val }))
+        }
+        insurance={weightShippingData.insurance}
+        setInsurance={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, insurance: val }))
+        }
+        shippingService={weightShippingData.shippingService}
+        setShippingService={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, shippingService: val }))
+        }
+        preOrder={weightShippingData.preOrder}
+        setPreOrder={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, preOrder: val }))
+        }
+        dimensionsUnit={weightShippingData.dimensionsUnit}
+        setDimensionsUnit={(val) =>
+          setWeightShippingData((prev) => ({ ...prev, dimensionsUnit: val }))
+        }
       />
 
       <div className="mt-6 flex justify-end">

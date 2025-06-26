@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Plus} from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { getAllCategories, createCategory } from "../../api/categoryApi";
 import CreateCategoryModal from "../molecules/CreateCategoryModal";
 
@@ -8,11 +8,8 @@ const ProductInfoStep = ({
   setProductName,
   category,
   setCategory,
-  // subcategory,
-  setSubcategory,
 }) => {
   const [categories, setCategories] = useState([]);
-  // const [filteredSubcategories, setFilteredSubcategories] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
@@ -27,12 +24,6 @@ const ProductInfoStep = ({
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    // const selected = categories.find((cat) => cat._id === category);
-    // setFilteredSubcategories(selected?.subcategories || []);
-    setSubcategory(""); // reset subcategory on category change
-  }, [category, categories, setSubcategory]);
-
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     if (value === "add-new") {
@@ -42,17 +33,17 @@ const ProductInfoStep = ({
     }
   };
 
-const handleCreateCategory = async (formData) => {
-  try {
-    const newCat = await createCategory(formData); // call API
-    setCategories((prev) => [...prev, newCat]);   // add to dropdown
-    setCategory(newCat._id);                      // auto-select new category
-    setShowCreateModal(false);                    // close modal
-  } catch (err) {
-    console.error("Failed to create category", err);
-    alert("Category creation failed");
-  }
-};
+  const handleCreateCategory = async (formData) => {
+    try {
+      const newCat = await createCategory(formData);
+      setCategories((prev) => [...prev, newCat]);
+      setCategory(newCat._id); // ensure new category is selected
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error("Failed to create category", err);
+      alert("Category creation failed");
+    }
+  };
 
   return (
     <div className="relative p-5 mt-8">
@@ -112,9 +103,11 @@ const handleCreateCategory = async (formData) => {
                 className="h-10 w-full rounded-md border px-3 py-2 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-200 pr-8"
               >
                 <option value="">Select a Category</option>
-                <option value="add-new" className="bg-green-100 font-medium"> + Add New Category</option>
+                <option value="add-new" className="bg-green-100 font-medium">
+                  + Add New Category
+                </option>
                 {categories.map((cat) => (
-                  <option key={cat._id} value={cat.name}>
+                  <option key={cat._id} value={cat._id}>
                     {cat.name}
                   </option>
                 ))}
@@ -122,38 +115,9 @@ const handleCreateCategory = async (formData) => {
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 size-4 pointer-events-none text-gray-500" />
             </div>
           </div>
-
-          {/* Subcategory */}
-          {/* <div className="flex flex-col xl:flex-row items-start">
-            <div className="w-full xl:w-64 xl:mr-10">
-              <label htmlFor="subcategory" className="font-medium">
-                Subcategory
-              </label>
-              <p className="mt-3 text-xs opacity-70 leading-relaxed">
-                You can add a new subcategory or choose from existing ones.
-              </p>
-            </div>
-            <div className="mt-3 xl:mt-0 flex-1 w-full relative">
-              <select
-                id="subcategory"
-                value={subcategory}
-                onChange={(e) => setSubcategory(e.target.value)}
-                className="h-10 w-full rounded-md border px-3 py-2 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-200 pr-8"
-              >
-                <option value="">Select a Subcategory</option>
-                {filteredSubcategories.map((sub) => (
-                  <option key={sub._id} value={sub._id}>
-                    {sub.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 size-4 pointer-events-none text-gray-500" />
-            </div>
-          </div> */}
         </div>
       </div>
 
-      {/* Create Category Modal */}
       <CreateCategoryModal
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
