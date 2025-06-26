@@ -16,17 +16,21 @@ export default function CategoryPage() {
   const [categories, setCategories] = useState([]);
   const [editingCategory, setEditingCategory] = useState(null);
   const [deletingCategory, setDeletingCategory] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
   const fetchCategories = async () => {
+    setLoading(true)
     try {
       const data = await getAllCategories();
       setCategories(data);
     } catch (error) {
       console.error("Failed to fetch categories", error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -77,6 +81,15 @@ export default function CategoryPage() {
       console.error("Failed to create category", err);
     }
   };
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+        <span className="ml-3 text-blue-600 font-semibold text-lg">
+          Loading...
+        </span>
+      </div>
+    );
 
   return (
     <div className="p-6">
@@ -103,6 +116,7 @@ export default function CategoryPage() {
             </tr>
           </thead>
           <tbody>
+
             {categories.map((cat, i) => (
               <tr key={cat._id} className="border-t hover:bg-gray-50">
                 <td className="py-3 px-4">{i + 1}</td>
