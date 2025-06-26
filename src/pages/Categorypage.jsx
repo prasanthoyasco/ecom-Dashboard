@@ -10,6 +10,7 @@ import {
 
 export default function CategoryPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [saving , setSaving] = useState(false)
   const fileInputRef = useRef(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -39,6 +40,7 @@ export default function CategoryPage() {
   };
 
   const handleEdit = async () => {
+    setSaving(true)
     try {
       const updated = await updateCategory(
         editingCategory._id,
@@ -52,6 +54,8 @@ export default function CategoryPage() {
       setPreviewImage(null);
     } catch (error) {
       console.error("Failed to update category", error);
+    }finally{
+      setSaving(false)
     }
   };
 
@@ -230,9 +234,10 @@ export default function CategoryPage() {
               </button>
               <button
                 onClick={handleEdit}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                disabled={saving}
               >
-                Save
+                {saving ? "Saving..." : "Save"}
               </button>
             </div>
           </div>

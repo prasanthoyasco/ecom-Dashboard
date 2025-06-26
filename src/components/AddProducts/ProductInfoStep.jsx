@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, Plus} from "lucide-react";
-import { getAllCategories } from "../../api/categoryApi";
+import { getAllCategories, createCategory } from "../../api/categoryApi";
 import CreateCategoryModal from "../molecules/CreateCategoryModal";
 
 const ProductInfoStep = ({
@@ -42,11 +42,17 @@ const ProductInfoStep = ({
     }
   };
 
-  const handleCreateCategory = (newCategory) => {
-    setCategories((prev) => [...prev, newCategory]);
-    setCategory(newCategory._id);
-    setShowCreateModal(false);
-  };
+const handleCreateCategory = async (formData) => {
+  try {
+    const newCat = await createCategory(formData); // call API
+    setCategories((prev) => [...prev, newCat]);   // add to dropdown
+    setCategory(newCat._id);                      // auto-select new category
+    setShowCreateModal(false);                    // close modal
+  } catch (err) {
+    console.error("Failed to create category", err);
+    alert("Category creation failed");
+  }
+};
 
   return (
     <div className="relative p-5 mt-8">
@@ -108,7 +114,7 @@ const ProductInfoStep = ({
                 <option value="">Select a Category</option>
                 <option value="add-new" className="bg-green-100 font-medium"> + Add New Category</option>
                 {categories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
+                  <option key={cat._id} value={cat.name}>
                     {cat.name}
                   </option>
                 ))}

@@ -275,17 +275,20 @@ export default function ProductList() {
                   <td className="p-3">
                     <input type="checkbox" />
                   </td>
-                  <td className="p-3 flex flex-wrap gap-1">
+                  <td className="p-3">
+                  <div className="flex items-center -space-x-2">
                     {product.images.map((img, i) => (
                       <img
                         key={i}
                         src={img}
                         alt="thumb"
                         title={product.name}
-                        className="w-10 h-10 rounded-full object-cover border"
+                        className="w-10 h-10 rounded-full object-cover border-2 border-white"
                       />
                     ))}
-                  </td>
+                  </div>
+                </td>
+
                   <td className="p-3 whitespace-nowrap">{product.name}</td>
                   <td className="p-3 whitespace-nowrap">{product.category}</td>
                   <td className="p-3 whitespace-nowrap">{product.stock}</td>
