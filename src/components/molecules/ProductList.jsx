@@ -26,7 +26,7 @@ export default function ProductList() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  // const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,9 +37,10 @@ export default function ProductList() {
           getAllCategories(),
         ]);
         setProducts(productRes.data);
+        console.log(categoryRes);        
         setCategories(categoryRes);
       } catch (error) {
-        toast.error("Failed to load products or categories");
+        toast.error("Failed to load products or categories",error);
       } finally {
         setLoading(false);
       }
@@ -181,7 +182,7 @@ export default function ProductList() {
       try {
         await deleteProduct(id);
       } catch (err) {
-        toast.error(`Failed to delete product with ID ${id}`);
+        toast.error(`Failed to delete product with ID ${id}`,err);
       }
     }
 
@@ -209,7 +210,7 @@ export default function ProductList() {
       try {
         await updateProduct(id, { status: newStatus });
       } catch (err) {
-        toast.error(`Failed to update status for ID ${id}`);
+        toast.error(`Failed to update status for ID ${id}`,err);
       }
     }
 

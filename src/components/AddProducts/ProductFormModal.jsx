@@ -137,8 +137,8 @@ const ProductFormModal = () => {
         }
         break;
       case 1:
-        if (!productInfo.productName || productInfo.productName?.length < 20) {
-          toast.error("Product name must be at least 20 characters.");
+        if (!productInfo.productName || productInfo.productName?.length < 10) {
+          toast.error("Product name must be at least 10 characters.");
           return;
         }
         if (!productInfo.category) {
@@ -151,8 +151,8 @@ const ProductFormModal = () => {
           toast.error("Description is required.");
           return;
         }
-        if (productDetails.description?.length < 30) {
-          toast.error("Description should be at least 30 characters.");
+        if (productDetails.description?.length < 20) {
+          toast.error("Description should be at least 20 characters.");
           return;
         }
         break;
@@ -213,6 +213,7 @@ const ProductFormModal = () => {
         id: uuidv4(),
         images: uploadedPhotoUrls,
         name: productInfo.productName,
+        discription:productDetails.description,
         category: productInfo.category,
         subcategory: productInfo.subcategory,
         productVideoUrl: productDetails.videoUrl,
@@ -227,7 +228,7 @@ const ProductFormModal = () => {
           },
         },
         stock: Number(productManagementData.stock || 0),
-         price: Number(productManagementData.price || 0),
+        price: Number(productManagementData.price || 0),
         SKU: productManagementData.sku || "",
         status: productManagementData.isActive ? "Active" : "Inactive",
       };
